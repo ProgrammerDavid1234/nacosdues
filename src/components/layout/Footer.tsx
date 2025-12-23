@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
-              A secure and user-friendly payment platform for KDU NACOS members to pay their dues and levies online. 
+              A secure and user-friendly payment platform for KDU NACOS members to pay their dues and levies online.
               A 400 Level Computer Science Project with HCI Focus.
             </p>
           </div>
@@ -31,20 +31,11 @@ const Footer: React.FC = () => {
             <h4 className="text-sm font-semibold uppercase tracking-wider">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/login" className="text-sm text-muted-foreground hover:text-background transition-colors">
-                  Student Login
+                <Link to="/pay" className="text-sm text-muted-foreground hover:text-background transition-colors">
+                  Pay Dues
                 </Link>
               </li>
-              <li>
-                <Link to="/register" className="text-sm text-muted-foreground hover:text-background transition-colors">
-                  Register
-                </Link>
-              </li>
-              <li>
-                <Link to="/payments" className="text-sm text-muted-foreground hover:text-background transition-colors">
-                  Make Payment
-                </Link>
-              </li>
+              {/* Admin login hidden */}
             </ul>
           </div>
 

@@ -12,13 +12,15 @@ import Payments from "./pages/Payments";
 import PaymentHistory from "./pages/PaymentHistory";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import StudentPayment from "./pages/StudentPayment";
+import Receipt from "./pages/Receipt";
 
 const queryClient = new QueryClient();
 
 // Protected Route Component
-const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({ 
-  children, 
-  adminOnly = false 
+const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({
+  children,
+  adminOnly = false
 }) => {
   const { isAuthenticated, user } = useAuth();
 
@@ -48,6 +50,9 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Index />} />
+      <Route path="/pay" element={<StudentPayment />} />
+      <Route path="/receipt/:id" element={<Receipt />} />
+
       <Route path="/login" element={
         <PublicRoute>
           <Login />

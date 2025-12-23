@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/layout/Layout';
-import { 
-  Shield, 
-  CreditCard, 
-  Receipt, 
-  Users, 
-  ChevronRight, 
+import {
+  Shield,
+  CreditCard,
+  Receipt,
+  Users,
+  ChevronRight,
   CheckCircle2,
   Smartphone,
   Clock,
@@ -64,7 +64,7 @@ const Index: React.FC = () => {
   ];
 
   const steps = [
-    { step: '01', title: 'Register', description: 'Create your account with your matric number' },
+    { step: '01', title: 'Enter Details', description: 'Fill in your name and matric number' },
     { step: '02', title: 'Select Payment', description: 'Choose the dues or levy you want to pay' },
     { step: '03', title: 'Make Payment', description: 'Pay securely via your preferred method' },
     { step: '04', title: 'Get Receipt', description: 'Download your payment receipt instantly' }
@@ -75,7 +75,7 @@ const Index: React.FC = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden gradient-hero min-h-[90vh] flex items-center">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-        
+
         <div className="container relative z-10 py-20">
           <motion.div
             initial="initial"
@@ -103,22 +103,18 @@ const Index: React.FC = () => {
               variants={fadeUp}
               className="text-lg md:text-xl text-primary-foreground/80 mb-8 max-w-2xl"
             >
-              A secure, fast, and convenient way to pay your departmental dues, levies, and fees. 
+              A secure, fast, and convenient way to pay your departmental dues, levies, and fees.
               No more queues, no more cash handling - just simple online payments.
             </motion.p>
 
             <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
               <Button asChild variant="gold" size="xl">
-                <Link to="/register">
-                  Get Started
+                <Link to="/pay">
+                  Pay Now
                   <ChevronRight className="h-5 w-5" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="xl" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
-                <Link to="/login">
-                  Student Login
-                </Link>
-              </Button>
+              {/* Admin login hidden as per request */}
             </motion.div>
 
             <motion.div
@@ -243,27 +239,23 @@ const Index: React.FC = () => {
             className="relative overflow-hidden rounded-3xl gradient-hero p-8 md:p-16 text-center"
           >
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-            
+
             <div className="relative z-10">
               <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
                 Ready to Make Your Payment?
               </h2>
               <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-                Join hundreds of students who have already made their payments online. 
+                Join hundreds of students who have already made their payments online.
                 It's fast, secure, and hassle-free.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild variant="gold" size="lg">
-                  <Link to="/register">
-                    Create Account
+                  <Link to="/pay">
+                    Pay Dues Now
                     <ChevronRight className="h-5 w-5" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
-                  <Link to="/login">
-                    Sign In
-                  </Link>
-                </Button>
+                {/* Admin login hidden as per request */}
               </div>
             </div>
 

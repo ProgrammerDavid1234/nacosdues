@@ -35,7 +35,7 @@ const Login: React.FC = () => {
         title: 'Welcome back!',
         description: 'Login successful. Redirecting...',
       });
-      
+
       // Check if admin or student
       if (email === 'admin@nacos.edu.ng') {
         navigate('/admin');
@@ -70,9 +70,9 @@ const Login: React.FC = () => {
             </div>
           </Link>
 
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Welcome back</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Admin Access</h2>
           <p className="text-muted-foreground mb-8">
-            Sign in to access your payment dashboard
+            Sign in to manage payments and verify transactions
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -136,10 +136,7 @@ const Login: React.FC = () => {
           </form>
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-primary font-medium hover:underline">
-              Create account
-            </Link>
+            Student? <Link to="/pay" className="text-primary font-medium hover:underline">Pay Dues Here</Link>
           </p>
 
           {/* Demo Credentials */}
@@ -157,7 +154,7 @@ const Login: React.FC = () => {
       {/* Right Panel - Decorative */}
       <div className="hidden lg:flex flex-1 gradient-hero items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-        
+
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -171,7 +168,7 @@ const Login: React.FC = () => {
             NACOS Payment Gateway
           </h3>
           <p className="text-primary-foreground/80">
-            The official payment platform for Nigeria Association of Computing Students. 
+            The official payment platform for Nigeria Association of Computing Students.
             Pay your dues securely and get instant receipts.
           </p>
         </motion.div>
