@@ -7,12 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react';
+import { API_BASE_URL } from '@/components/api/api';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const { setUser } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -28,26 +30,77 @@ const Login: React.FC = () => {
       return;
     }
 
-    const success = await login(email, password);
+    setIsLoading(true);
 
-    if (success) {
-      toast({
-        title: 'Welcome back!',
-        description: 'Login successful. Redirecting...',
+    try {
+      // OAuth2PasswordRequestForm expects form data, not JSON
+      const formData = new URLSearchParams();
+      formData.append('username', email);
+      formData.append('password', password);
+
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString(),
       });
 
-      // Check if admin or student
-      if (email === 'admin@nacos.edu.ng') {
-        navigate('/admin');
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store access token (your backend returns 'access_token')
+        if (data.access_token) {
+          localStorage.setItem('token', data.access_token);
+        }
+
+        // Prepare user data from your backend response
+        const userData = {
+          id: data.user.id,
+          email: data.user.email,
+          fullName: data.user.full_name,
+          matricNumber: data.user.matric_number || '',
+          department: data.user.department || '',
+          level: data.user.level || '',
+          phone: data.user.phone_number || '',
+          role: data.user.role,
+          createdAt: new Date().toISOString(),
+        };
+
+        // Store user in localStorage
+        localStorage.setItem('user', JSON.stringify(userData));
+
+        // Update auth context
+        setUser(userData);
+
+        toast({
+          title: 'Welcome back!',
+          description: 'Login successful. Redirecting...',
+        });
+
+        // Navigate based on role
+        if (userData.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
-        navigate('/dashboard');
+        // Handle error response
+        toast({
+          title: 'Login Failed',
+          description: data.detail || 'Invalid email or password. Please try again.',
+          variant: 'destructive',
+        });
       }
-    } else {
+    } catch (error) {
+      console.error('Login error:', error);
       toast({
-        title: 'Login Failed',
-        description: 'Invalid email or password. Please try again.',
+        title: 'Connection Error',
+        description: 'Unable to connect to the server. Please try again later.',
         variant: 'destructive',
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -70,7 +123,7 @@ const Login: React.FC = () => {
             </div>
           </Link>
 
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Admin Access</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Login</h2>
           <p className="text-muted-foreground mb-8">
             Sign in to manage payments and verify transactions
           </p>
@@ -136,18 +189,9 @@ const Login: React.FC = () => {
           </form>
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
-            Student? <Link to="/pay" className="text-primary font-medium hover:underline">Pay Dues Here</Link>
+            Don't Have An Account? <Link to="/signup" className="text-primary font-medium hover:underline">Signup</Link>
           </p>
 
-          {/* Demo Credentials */}
-          <div className="mt-8 p-4 rounded-xl bg-accent border border-border">
-            <p className="text-xs font-medium text-muted-foreground mb-2">Demo Credentials:</p>
-            <div className="space-y-1 text-xs text-muted-foreground">
-              <p><strong>Student:</strong> student@nacos.edu.ng</p>
-              <p><strong>Admin:</strong> admin@nacos.edu.ng</p>
-              <p><strong>Password:</strong> password123</p>
-            </div>
-          </div>
         </motion.div>
       </div>
 

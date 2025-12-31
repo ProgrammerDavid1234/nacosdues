@@ -1,13 +1,11 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { User } from '@/types';
-import { mockUsers } from '@/data/mockData';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (userData: Partial<User>, password: string) => Promise<boolean>;
+  isLoading: boolean; // Add this
+  setUser: (user: User | null) => void;
   logout: () => void;
 }
 
@@ -15,57 +13,32 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Start with loading
 
-  const login = useCallback(async (email: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
+  // Check for existing session on mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Mock authentication - in production, this would validate against a backend
-    const foundUser = mockUsers.find(u => u.email === email);
-    
-    if (foundUser && password.length >= 6) {
-      setUser(foundUser);
-      setIsLoading(false);
-      return true;
+    if (token && savedUser) {
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('Error parsing saved user:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     }
     
+    // Set loading to false after checking
     setIsLoading(false);
-    return false;
-  }, []);
-
-  const register = useCallback(async (userData: Partial<User>, password: string): Promise<boolean> => {
-    setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Mock registration
-    if (userData.email && userData.fullName && password.length >= 6) {
-      const newUser: User = {
-        id: Date.now().toString(),
-        email: userData.email,
-        fullName: userData.fullName,
-        matricNumber: userData.matricNumber || '',
-        department: userData.department || 'Computer Science',
-        level: userData.level || '100',
-        phone: userData.phone || '',
-        role: 'student',
-        createdAt: new Date(),
-      };
-      setUser(newUser);
-      setIsLoading(false);
-      return true;
-    }
-    
-    setIsLoading(false);
-    return false;
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   }, []);
 
   return (
@@ -73,9 +46,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user,
         isAuthenticated: !!user,
-        isLoading,
-        login,
-        register,
+        isLoading, // Add this
+        setUser,
         logout,
       }}
     >
@@ -90,4 +62,18 @@ export const useAuth = (): AuthContextType => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+};
+
+// Utility function to get auth token for API calls
+export const getAuthToken = (): string | null => {
+  return localStorage.getItem('token');
+};
+
+// Utility function to get auth headers for API calls
+export const getAuthHeaders = (): HeadersInit => {
+  const token = getAuthToken();
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 };

@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { ThemeProvider } from '@/context/ThemeContext';
+import { Loader2 } from 'lucide-react';
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -14,15 +16,33 @@ import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import StudentPayment from "./pages/StudentPayment";
 import Receipt from "./pages/Receipt";
+import VerifyPayment from "./pages/VerifyPayment";
+import StudentSignup from "./pages/StudentSignup";
+import ScrollToTop from "./components/ScrollToTop"
 
 const queryClient = new QueryClient();
+
+// Loading Component
+const AuthLoading = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="text-center">
+      <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+      <p className="text-muted-foreground">Loading...</p>
+    </div>
+  </div>
+);
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({
   children,
   adminOnly = false
 }) => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
+
+  // Show loading while checking auth
+  if (isLoading) {
+    return <AuthLoading />;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -37,7 +57,12 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean 
 
 // Public Route (redirects if already logged in)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
+
+  // Show loading while checking auth
+  if (isLoading) {
+    return <AuthLoading />;
+  }
 
   if (isAuthenticated) {
     return <Navigate to={user?.role === 'admin' ? '/admin' : '/dashboard'} replace />;
@@ -52,6 +77,8 @@ const AppRoutes = () => {
       <Route path="/" element={<Index />} />
       <Route path="/pay" element={<StudentPayment />} />
       <Route path="/receipt/:id" element={<Receipt />} />
+      <Route path="/verify-payment" element={<VerifyPayment />} />
+      <Route path="/signup" element={<StudentSignup />} />
 
       <Route path="/login" element={
         <PublicRoute>
@@ -95,15 +122,18 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <ThemeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <ScrollToTop />
+            <AppRoutes />
+          </TooltipProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 

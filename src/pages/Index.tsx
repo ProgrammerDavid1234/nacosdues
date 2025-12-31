@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/layout/Layout';
+
 import {
   Shield,
   CreditCard,
@@ -109,7 +110,7 @@ const Index: React.FC = () => {
 
             <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
               <Button asChild variant="gold" size="xl">
-                <Link to="/pay">
+                <Link to="/payments">
                   Pay Now
                   <ChevronRight className="h-5 w-5" />
                 </Link>
