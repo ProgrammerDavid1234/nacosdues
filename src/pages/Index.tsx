@@ -251,7 +251,7 @@ const Index: React.FC = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild variant="gold" size="lg">
-                  <Link to="/pay">
+                  <Link to="/payments">
                     Pay Dues Now
                     <ChevronRight className="h-5 w-5" />
                   </Link>

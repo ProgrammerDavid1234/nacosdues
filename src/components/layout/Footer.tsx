@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
             <h4 className="text-sm font-semibold uppercase tracking-wider">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/pay" className="text-sm text-muted-foreground hover:text-background transition-colors">
+                <Link to="/payments" className="text-sm text-muted-foreground hover:text-background transition-colors">
                   Pay Dues
                 </Link>
               </li>

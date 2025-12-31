@@ -8,7 +8,6 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { Loader2 } from 'lucide-react';
 import Index from "./pages/Index";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Payments from "./pages/Payments";
 import PaymentHistory from "./pages/PaymentHistory";
@@ -83,11 +82,6 @@ const AppRoutes = () => {
       <Route path="/login" element={
         <PublicRoute>
           <Login />
-        </PublicRoute>
-      } />
-      <Route path="/register" element={
-        <PublicRoute>
-          <Register />
         </PublicRoute>
       } />
       <Route path="/dashboard" element={
