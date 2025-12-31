@@ -107,7 +107,7 @@ const Header: React.FC = () => {
                 Login
               </Link>
               <Button asChild variant="default" size="sm">
-                <Link to="/register">Get Started</Link>
+                <Link to="/signup">Get Started</Link>
               </Button>
             </>
           )}
@@ -190,7 +190,7 @@ const Header: React.FC = () => {
                   Login
                 </Link>
                 <Link
-                  to="/register"
+                  to="/signup"
                   className="px-3 py-2 text-sm font-medium gradient-primary text-primary-foreground rounded-lg text-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
