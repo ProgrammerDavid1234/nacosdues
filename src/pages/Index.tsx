@@ -34,8 +34,8 @@ const Index: React.FC = () => {
   const features = [
     {
       icon: CreditCard,
-      title: 'Multiple Payment Options',
-      description: 'Pay with debit cards, bank transfers, or USSD - whatever works best for you.'
+      title: 'Trusted Payments by Paystack',
+      description: 'Your payments are processed securely via Paystack using cards, bank transfer, or USSD.'
     },
     {
       icon: Receipt,
@@ -65,7 +65,7 @@ const Index: React.FC = () => {
   ];
 
   const steps = [
-    { step: '01', title: 'Enter Details', description: 'Fill in your name and matric number' },
+    { step: '01', title: 'Enter Details', description: 'Create an account' },
     { step: '02', title: 'Select Payment', description: 'Choose the dues or levy you want to pay' },
     { step: '03', title: 'Make Payment', description: 'Pay securely via your preferred method' },
     { step: '04', title: 'Get Receipt', description: 'Download your payment receipt instantly' }
