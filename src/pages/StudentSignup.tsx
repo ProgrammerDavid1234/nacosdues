@@ -158,7 +158,7 @@ const Signup: React.FC = () => {
           role: 'student', // Always send role as student
         }),
       });
-
+        const data = await response.json();
       if (response.ok) {
         toast({
           title: 'Registration Successful!',
@@ -168,10 +168,27 @@ const Signup: React.FC = () => {
         // Redirect to login page
         navigate('/login');
       } else {
-        // Don't try to parse error - just show generic message
+
+        let errorMessage = 'Unable to create account. Please try again later.';
+      
+      if (data.detail) {
+        // Handle string detail
+        if (typeof data.detail === 'string') {
+          errorMessage = data.detail;
+        } 
+        // Handle array of error objects (FastAPI validation errors)
+        else if (Array.isArray(data.detail)) {
+          errorMessage = data.detail.map((err: any) => err.msg).join(', ');
+        }
+      } else if (data.message) {
+        errorMessage = data.message;
+      } else if (data.error) {
+        errorMessage = data.error;
+      }
+
         toast({
           title: 'Registration Failed',
-          description: 'Unable to create account. Please try again later.',
+          description: errorMessage,
           variant: 'destructive',
         });
       }
@@ -350,20 +367,6 @@ const Signup: React.FC = () => {
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
-            </div>
-
-            {/* Terms and Conditions */}
-            <div className="flex items-start gap-2">
-              <input
-                type="checkbox"
-                id="terms"
-                checked={termsAccepted}
-                onChange={(e) => setTermsAccepted(e.target.checked)}
-                className="rounded border-border mt-1"
-              />
-              <label htmlFor="terms" className="text-sm text-muted-foreground">
-                I agree to the <a href="#" className="text-primary hover:underline">Terms and Conditions</a> and <a href="#" className="text-primary hover:underline">Privacy Policy</a>
-              </label>
             </div>
 
             <Button
