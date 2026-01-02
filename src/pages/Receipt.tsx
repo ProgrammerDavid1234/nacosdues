@@ -73,7 +73,7 @@ export const ReceiptContent: React.FC<{ payment: ReceiptData }> = ({ payment }) 
             <img src={nacos} alt="NACOS" style={{ height: "48px", width: "48px", objectFit: "contain" }} />
             <div>
               <div style={{ fontSize: "14px", fontWeight: "700", color: "#111827", lineHeight: "1.2" }}>NACOS</div>
-              <div style={{ fontSize: "11px", color: "#6b7280", lineHeight: "1.2" }}>KDU Chapter</div>
+              <div style={{ fontSize: "11px", color: "#6b7280", lineHeight: "1.2", whiteSpace: "nowrap" }}>KDU Chapter</div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
