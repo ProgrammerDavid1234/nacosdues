@@ -86,7 +86,7 @@ export const ReceiptContent: React.FC<{ payment: ReceiptData }> = ({ payment }) 
         </div>
         <div style={{ textAlign: "center", paddingTop: "12px", borderTop: "2px solid #e5e7eb" }}>
           <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#111827", margin: "0 0 8px 0" }}>PAYMENT RECEIPT</h1>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "#16a34a", fontSize: "13px", fontWeight: "600" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "#16a34a", fontSize: "13px", fontWeight: "600", whiteSpace: "nowrap" }}>
             <span>✓</span>
             <span>PAYMENT SUCCESSFUL</span>
           </div>

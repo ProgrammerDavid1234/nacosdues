@@ -254,6 +254,14 @@ const PaymentHistory: React.FC = () => {
   }
 };
 
+const handleVerifyPayment = (payment: PaymentHistoryItem) => {
+  // navigate(`/verify-payment/${payment.payment_reference}`);
+  navigate(`/verify-payment?trxref=${payment.payment_reference}&reference=${payment.payment_reference}`);
+};
+
+const handleViewReceipt = (payment: PaymentHistoryItem) => {
+  navigate(`/receipt/${payment.id}`);
+};
   const getStatusConfig = (status: string) => {
     const upperStatus = status.toUpperCase();
     if (upperStatus === 'COMPLETED') {
@@ -484,25 +492,42 @@ const PaymentHistory: React.FC = () => {
                             </p>
                           </div>
                           
-                          {/* Download Button */}
-                          {completed && (
-                            <button
-                              onClick={() => handleDownloadReceipt(payment)}
-                              disabled={isDownloading}
-                              className={`p-2 rounded-lg transition-all ${
-                                isDownloading
-                                  ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed'
-                                  : 'bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                              }`}
-                              title="Download Receipt"
-                            >
-                              {isDownloading ? (
-                                <Loader2 className="h-4 w-4 md:h-5 md:w-5 animate-spin" />
-                              ) : (
-                                <Download className="h-4 w-4 md:h-5 md:w-5" />
-                              )}
-                            </button>
-                          )}
+                          {/* Download/Verify Button */}
+{completed ? (
+  <div className="flex gap-2">
+    <button
+      onClick={() => handleViewReceipt(payment)}
+      className="p-2 rounded-lg bg-green-50 dark:bg-green-950/30 hover:bg-green-100 dark:hover:bg-green-950/50 text-green-600 dark:text-green-400 transition-all"
+      title="View Receipt"
+    >
+      <CheckCircle2 className="h-4 w-4 md:h-5 md:w-5" />
+    </button>
+    <button
+      onClick={() => handleDownloadReceipt(payment)}
+      disabled={isDownloading}
+      className={`p-2 rounded-lg transition-all ${
+        isDownloading
+          ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed'
+          : 'bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-950/50 text-blue-600 dark:text-blue-400'
+      }`}
+      title="Download Receipt"
+    >
+      {isDownloading ? (
+        <Loader2 className="h-4 w-4 md:h-5 md:w-5 animate-spin" />
+      ) : (
+        <Download className="h-4 w-4 md:h-5 md:w-5" />
+      )}
+    </button>
+  </div>
+) : payment.status.toUpperCase() === 'PENDING' ? (
+  <button
+    onClick={() => handleVerifyPayment(payment)}
+    className="px-3 py-1.5 rounded-lg bg-yellow-50 dark:bg-yellow-950/30 hover:bg-yellow-100 dark:hover:bg-yellow-950/50 text-yellow-600 dark:text-yellow-400 transition-all text-xs font-medium"
+    title="Verify Payment"
+  >
+    Verify Payment
+  </button>
+) : null}
                         </div>
 
                         {/* Additional Details */}
