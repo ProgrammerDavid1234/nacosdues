@@ -51,463 +51,282 @@ interface ReceiptData {
   };
 }
 
-// Professional Receipt Content Component - Always white for PDF/Print with thin light borders
-export const ReceiptContent: React.FC<{ payment: ReceiptData }> = ({
-  payment,
-}) => {
+// PDF Receipt Component - Optimized for A4 printing
+export const ReceiptContent: React.FC<{ payment: ReceiptData }> = ({ payment }) => {
   return (
     <div
-      className="bg-white rounded-lg overflow-hidden max-w-3xl mx-auto shadow-sm border border-gray-300"
+      className="bg-white"
       id="receipt-content"
       style={{
         fontFamily: "system-ui, -apple-system, sans-serif",
-        width: "798px",
-        margin: "0 auto",
+        width: "794px",
+        minHeight: "1123px",
+        padding: "40px",
         boxSizing: "border-box",
+        margin: "0 auto",
       }}
     >
       {/* Header with Logos */}
-      <div className="bg-white px-6 py-3 border-b-2 border-gray-300">
-        <div className="flex justify-between items-center mb-2">
-          {/* NACOS Logo - Left */}
-          <div className="flex items-center gap-2">
-            <img
-              src={nacos}
-              alt="NACOS Logo"
-              className="h-12 w-12 object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
+      <div style={{ borderBottom: "2px solid #d1d5db", paddingBottom: "16px", marginBottom: "24px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <img src={nacos} alt="NACOS" style={{ height: "48px", width: "48px", objectFit: "contain" }} />
             <div>
-              <p className="text-sm font-bold text-gray-900 leading-tight">
-                NACOS
-              </p>
-              <p className="text-xs text-gray-600 leading-tight">KDU Chapter</p>
+              <div style={{ fontSize: "14px", fontWeight: "700", color: "#111827", lineHeight: "1.2" }}>NACOS</div>
+              <div style={{ fontSize: "11px", color: "#6b7280", lineHeight: "1.2" }}>KDU Chapter</div>
             </div>
           </div>
-
-          {/* University Logo - Right */}
-          <div className="flex items-center gap-2">
-            <div className="text-right">
-              <p className="text-sm font-bold text-gray-900 leading-tight">
-                KOLADAISI
-              </p>
-              <p className="text-xs text-gray-600 leading-tight">University</p>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontSize: "14px", fontWeight: "700", color: "#111827", lineHeight: "1.2" }}>KOLADAISI</div>
+              <div style={{ fontSize: "11px", color: "#6b7280", lineHeight: "1.2" }}>University</div>
             </div>
-            <img
-              src={KDU}
-              alt="University Logo"
-              className="h-12 w-12 object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
+            <img src={KDU} alt="KDU" style={{ height: "48px", width: "48px", objectFit: "contain" }} />
           </div>
         </div>
-
-        {/* Title */}
-        <div className="text-center pt-2 border-t-2 border-gray-200">
-          <h1 className="text-xl font-bold text-gray-900 mb-1">
-            PAYMENT RECEIPT
-          </h1>
-          <div className="inline-flex items-center gap-1 text-green-600 text-sm font-semibold">
-            <CheckCircle2 className="w-5 h-5" />
+        <div style={{ textAlign: "center", paddingTop: "12px", borderTop: "2px solid #e5e7eb" }}>
+          <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#111827", margin: "0 0 8px 0" }}>PAYMENT RECEIPT</h1>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "#16a34a", fontSize: "13px", fontWeight: "600" }}>
+            <span>✓</span>
             <span>PAYMENT SUCCESSFUL</span>
           </div>
         </div>
       </div>
 
-      {/* Receipt Content */}
-      <div className="px-6 py-5">
-        {/* Amount Section */}
-        <div className="text-center mb-5 pb-4 border-b-2 border-dashed border-gray-300">
-          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-            Amount Paid
-          </p>
-          <div className="text-4xl font-bold text-gray-900">
-            ₦{payment.total_amount.toLocaleString()}
-          </div>
-        </div>
+      {/* Amount */}
+      <div style={{ textAlign: "center", marginBottom: "32px", paddingBottom: "24px", borderBottom: "2px dashed #d1d5db" }}>
+        <div style={{ fontSize: "11px", fontWeight: "600", color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>Amount Paid</div>
+        <div style={{ fontSize: "36px", fontWeight: "700", color: "#111827" }}>₦{payment.total_amount.toLocaleString()}</div>
+      </div>
 
-        {/* Student Information */}
-        <div className="mb-5">
-          <h3 className="font-bold text-gray-900 text-base mb-3 pb-2 border-b-2 border-gray-300">
-            Student Information
-          </h3>
-          <div className="space-y-2.5">
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600">
-                Name
-              </label>
-              <p className="text-sm font-semibold text-gray-900">
-                {payment.student.full_name}
-              </p>
-            </div>
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600">
-                Matric Number
-              </label>
-              <p className="text-sm font-mono font-semibold text-gray-900">
-                {payment.student.matric_number}
-              </p>
-            </div>
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600">
-                Email
-              </label>
-              <p className="text-sm text-gray-900">{payment.student.email}</p>
-            </div>
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600">
-                Level
-              </label>
-              <p className="text-sm font-semibold text-gray-900">
-                {payment.student.level}L
-              </p>
-            </div>
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600">
-                Department
-              </label>
-              <p className="text-sm font-semibold text-gray-900">
-                {payment.student.department}
-              </p>
-            </div>
-          </div>
-        </div>
+      {/* Student Info */}
+      <div style={{ marginBottom: "24px" }}>
+        <h3 style={{ fontSize: "15px", fontWeight: "700", color: "#111827", margin: "0 0 16px 0", paddingBottom: "8px", borderBottom: "2px solid #d1d5db" }}>Student Information</h3>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <tbody>
+            <tr>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#6b7280", width: "40%" }}>Name</td>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#111827", textAlign: "right" }}>{payment.student.full_name}</td>
+            </tr>
+            <tr>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#6b7280" }}>Matric Number</td>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#111827", textAlign: "right", fontFamily: "monospace" }}>{payment.student.matric_number}</td>
+            </tr>
+            <tr>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#6b7280" }}>Level</td>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#111827", textAlign: "right" }}>{payment.student.level}L</td>
+            </tr>
+            <tr>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#6b7280" }}>Department</td>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#111827", textAlign: "right" }}>{payment.student.department}</td>
+            </tr>
+            <tr>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#6b7280" }}>Email</td>
+              <td style={{ padding: "8px 0", fontSize: "13px", color: "#111827", textAlign: "right", wordBreak: "break-all" }}>{payment.student.email}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        {/* Transaction Details */}
-        <div className="mb-5">
-          <h3 className="font-bold text-gray-900 text-base mb-3 pb-2 border-b-2 border-gray-300">
-            Transaction Details
-          </h3>
-          <div className="space-y-2.5">
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600">
-                Payment For
-              </label>
-              <p className="text-sm font-semibold text-gray-900">
-                {payment.category.name}
-              </p>
-            </div>
-            <div>
-              <label className="text-sm font-semibold text-gray-600 block mb-1">
-                Payment Reference
-              </label>
-              <p className="text-xs font-mono bg-gray-100 px-3 py-2 rounded border border-gray-300 break-all text-gray-900">
-                {payment.payment_reference}
-              </p>
-            </div>
+      {/* Transaction Details */}
+      <div style={{ marginBottom: "24px" }}>
+        <h3 style={{ fontSize: "15px", fontWeight: "700", color: "#111827", margin: "0 0 16px 0", paddingBottom: "8px", borderBottom: "2px solid #d1d5db" }}>Transaction Details</h3>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <tbody>
+            <tr>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#6b7280", width: "40%" }}>Payment For</td>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#111827", textAlign: "right" }}>{payment.category.name}</td>
+            </tr>
+            <tr>
+              <td colSpan={2} style={{ padding: "12px 0" }}>
+                <div style={{ fontSize: "13px", fontWeight: "600", color: "#6b7280", marginBottom: "6px" }}>Payment Reference</div>
+                <div style={{ fontSize: "11px", fontFamily: "monospace", backgroundColor: "#f3f4f6", padding: "10px 12px", borderRadius: "6px", border: "1px solid #d1d5db", color: "#111827", wordBreak: "break-all" }}>{payment.payment_reference}</div>
+              </td>
+            </tr>
             {payment.transaction_reference && (
-              <div>
-                <label className="text-sm font-semibold text-gray-600 block mb-1">
-                  Transaction Reference
-                </label>
-                <p className="text-xs font-mono bg-gray-100 px-3 py-2 rounded border border-gray-300 break-all text-gray-900">
-                  {payment.transaction_reference}
-                </p>
-              </div>
+              <tr>
+                <td colSpan={2} style={{ padding: "12px 0" }}>
+                  <div style={{ fontSize: "13px", fontWeight: "600", color: "#6b7280", marginBottom: "6px" }}>Transaction Reference</div>
+                  <div style={{ fontSize: "11px", fontFamily: "monospace", backgroundColor: "#f3f4f6", padding: "10px 12px", borderRadius: "6px", border: "1px solid #d1d5db", color: "#111827", wordBreak: "break-all" }}>{payment.transaction_reference}</div>
+                </td>
+              </tr>
             )}
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600">
-                Payment Date
-              </label>
-              <p className="text-sm font-semibold text-gray-900">
-                {format(new Date(payment.created_at), "dd/MM/yyyy")}
-              </p>
-            </div>
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600">
-                Payment Time
-              </label>
-              <p className="text-sm font-semibold text-gray-900">
-                {format(new Date(payment.created_at), "HH:mm:ss")}
-              </p>
-            </div>
-          </div>
-        </div>
+            <tr>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#6b7280" }}>Payment Date</td>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#111827", textAlign: "right" }}>{format(new Date(payment.created_at), "dd/MM/yyyy")}</td>
+            </tr>
+            <tr>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#6b7280" }}>Payment Time</td>
+              <td style={{ padding: "8px 0", fontSize: "13px", fontWeight: "600", color: "#111827", textAlign: "right" }}>{format(new Date(payment.created_at), "HH:mm:ss")}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        {/* Payment Summary */}
-        <div className="bg-gray-100 rounded-lg border-2 border-gray-300 p-4">
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-semibold text-gray-600">
-                Base Amount
-              </span>
-              <span className="text-sm font-semibold text-gray-900">
-                ₦{payment.original_amount.toLocaleString()}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-semibold text-gray-600">
-                Gateway Fee
-              </span>
-              <span className="text-sm font-semibold text-gray-900">
-                ₦{payment.paystack_charge.toLocaleString()}
-              </span>
-            </div>
-            <div className="h-px bg-gray-300"></div>
-            <div className="flex justify-between items-center">
-              <h3 className="text-base font-bold text-gray-900">
-                Total Amount Paid
-              </h3>
-              <span className="text-2xl font-bold text-green-600">
-                ₦{payment.total_amount.toLocaleString()}
-              </span>
-            </div>
-          </div>
-        </div>
+      {/* Payment Summary */}
+      <div style={{ backgroundColor: "#f3f4f6", borderRadius: "8px", border: "2px solid #d1d5db", padding: "20px", marginBottom: "24px" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <tbody>
+            <tr>
+              <td style={{ padding: "6px 0", fontSize: "13px", fontWeight: "600", color: "#6b7280" }}>Base Amount</td>
+              <td style={{ padding: "6px 0", fontSize: "13px", fontWeight: "600", color: "#111827", textAlign: "right" }}>₦{payment.original_amount.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td style={{ padding: "6px 0", fontSize: "13px", fontWeight: "600", color: "#6b7280" }}>Gateway Fee</td>
+              <td style={{ padding: "6px 0", fontSize: "13px", fontWeight: "600", color: "#111827", textAlign: "right" }}>₦{payment.paystack_charge.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td colSpan={2} style={{ paddingTop: "12px", paddingBottom: "12px" }}>
+                <div style={{ height: "1px", backgroundColor: "#d1d5db" }}></div>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ padding: "6px 0", fontSize: "15px", fontWeight: "700", color: "#111827" }}>Total Amount Paid</td>
+              <td style={{ padding: "6px 0", fontSize: "22px", fontWeight: "700", color: "#16a34a", textAlign: "right" }}>₦{payment.total_amount.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        {/* Footer Note */}
-        <div className="mt-5 text-center">
-          <p className="text-xs text-gray-600">
-            This is an official payment receipt. Keep for your records.
-          </p>
-          <p className="text-xs text-gray-500 mt-1">
-            Generated on {format(new Date(), "dd/MM/yyyy HH:mm:ss")}
-          </p>
-        </div>
+      {/* Footer */}
+      <div style={{ textAlign: "center", marginTop: "32px" }}>
+        <div style={{ fontSize: "11px", color: "#6b7280", marginBottom: "6px" }}>This is an official payment receipt. Keep for your records.</div>
+        <div style={{ fontSize: "10px", color: "#9ca3af" }}>Generated on {format(new Date(), "dd/MM/yyyy HH:mm:ss")}</div>
       </div>
 
       {/* Bottom Border */}
-      <div className="h-2 bg-green-600"></div>
+      <div style={{ height: "8px", backgroundColor: "#16a34a", marginTop: "32px", marginLeft: "-40px", marginRight: "-40px", marginBottom: "-40px" }}></div>
     </div>
   );
 };
 
-// Display Receipt Component - Dark mode support for screen only
-export const DisplayReceiptContent: React.FC<{ payment: ReceiptData }> = ({
-  payment,
-}) => {
+// Display Receipt Component - Responsive for screen
+export const DisplayReceiptContent: React.FC<{ payment: ReceiptData }> = ({ payment }) => {
   return (
-    <div
-      className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden max-w-3xl mx-auto shadow-sm border border-gray-300 dark:border-gray-700"
-      id="display-receipt"
-      style={{
-        fontFamily: "system-ui, -apple-system, sans-serif",
-        width: "798px",
-        margin: "0 auto",
-        boxSizing: "border-box",
-      }}
-    >
-      {/* Header with Logos */}
-      <div className="bg-white dark:bg-gray-800 px-6 py-3 border-b-2 border-gray-300 dark:border-gray-700">
-        <div className="flex justify-between items-center mb-2">
-          {/* NACOS Logo - Left */}
-          <div className="flex items-center gap-2">
-            <img
-              src={nacos}
-              alt="NACOS Logo"
-              className="h-12 w-12 object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
+    <div className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden w-full max-w-3xl mx-auto shadow-lg border border-gray-300 dark:border-gray-700">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 px-4 sm:px-6 py-3 sm:py-4 border-b-2 border-gray-300 dark:border-gray-700">
+        <div className="flex justify-between items-center gap-2 sm:gap-3 mb-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
+            <img src={nacos} alt="NACOS" className="h-8 w-8 sm:h-12 sm:w-12 object-contain" />
             <div>
-              <p className="text-sm font-bold text-gray-900 dark:text-gray-100 leading-tight">
-                NACOS
-              </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400 leading-tight">
-                KDU Chapter
-              </p>
+              <p className="text-[10px] sm:text-sm font-bold text-gray-900 dark:text-gray-100 leading-tight">NACOS</p>
+              <p className="text-[8px] sm:text-xs text-gray-600 dark:text-gray-400 leading-tight">KDU Chapter</p>
             </div>
           </div>
-
-          {/* University Logo - Right */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             <div className="text-right">
-              <p className="text-sm font-bold text-gray-900 dark:text-gray-100 leading-tight">
-                KOLADAISI
-              </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400 leading-tight">
-                University
-              </p>
+              <p className="text-[10px] sm:text-sm font-bold text-gray-900 dark:text-gray-100 leading-tight">KOLADAISI</p>
+              <p className="text-[8px] sm:text-xs text-gray-600 dark:text-gray-400 leading-tight">University</p>
             </div>
-            <img
-              src={KDU}
-              alt="University Logo"
-              className="h-12 w-12 object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
+            <img src={KDU} alt="University" className="h-8 w-8 sm:h-12 sm:w-12 object-contain" />
           </div>
         </div>
-
-        {/* Title */}
-        <div className="text-center pt-2 border-t-2 border-gray-200 dark:border-gray-700">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">
-            PAYMENT RECEIPT
-          </h1>
-          <div className="inline-flex items-center gap-1 text-green-600 dark:text-green-500 text-sm font-semibold">
-            <CheckCircle2 className="w-5 h-5" />
+        <div className="text-center pt-3 border-t-2 border-gray-200 dark:border-gray-700">
+          <h1 className="text-base sm:text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">PAYMENT RECEIPT</h1>
+          <div className="inline-flex items-center gap-1 text-green-600 dark:text-green-500 text-[10px] sm:text-sm font-semibold">
+            <CheckCircle2 className="w-3 h-3 sm:w-5 sm:h-5" />
             <span>PAYMENT SUCCESSFUL</span>
           </div>
         </div>
       </div>
 
-      {/* Receipt Content */}
-      <div className="px-6 py-5">
-        {/* Amount Section */}
-        <div className="text-center mb-5 pb-4 border-b-2 border-dashed border-gray-300 dark:border-gray-700">
-          <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
-            Amount Paid
-          </p>
-          <div className="text-4xl font-bold text-gray-900 dark:text-gray-100">
-            ₦{payment.total_amount.toLocaleString()}
-          </div>
+      {/* Content */}
+      <div className="px-4 sm:px-6 py-4 sm:py-5">
+        {/* Amount */}
+        <div className="text-center mb-4 sm:mb-5 pb-4 border-b-2 border-dashed border-gray-300 dark:border-gray-700">
+          <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">Amount Paid</p>
+          <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">₦{payment.total_amount.toLocaleString()}</div>
         </div>
 
-        {/* Student Information */}
-        <div className="mb-5">
-          <h3 className="font-bold text-gray-900 dark:text-gray-100 text-base mb-3 pb-2 border-b-2 border-gray-300 dark:border-gray-700">
-            Student Information
-          </h3>
-          <div className="space-y-2.5">
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Name
-              </label>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                {payment.student.full_name}
-              </p>
+        {/* Student Info - Grid Format */}
+        <div className="mb-4 sm:mb-5">
+          <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm sm:text-base mb-3 pb-2 border-b-2 border-gray-300 dark:border-gray-700">Student Information</h3>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+            <div>
+              <label className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 block mb-1">Name</label>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100 break-words">{payment.student.full_name}</p>
             </div>
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Matric Number
-              </label>
-              <p className="text-sm font-mono font-semibold text-gray-900 dark:text-gray-100">
-                {payment.student.matric_number}
-              </p>
+            <div>
+              <label className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 block mb-1">Matric Number</label>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100 font-mono break-words">{payment.student.matric_number}</p>
             </div>
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Email
-              </label>
-              <p className="text-sm text-gray-900 dark:text-gray-100">
-                {payment.student.email}
-              </p>
+            <div>
+              <label className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 block mb-1">Level</label>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100">{payment.student.level}L</p>
             </div>
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Level
-              </label>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                {payment.student.level}L
-              </p>
+            <div>
+              <label className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 block mb-1">Department</label>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100 break-words">{payment.student.department}</p>
             </div>
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Department
-              </label>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                {payment.student.department}
-              </p>
+             <div className="col-span-2">
+              <label className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 block mb-1">Email</label>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100 break-words">{payment.student.email}</p>
             </div>
           </div>
         </div>
 
         {/* Transaction Details */}
-        <div className="mb-5">
-          <h3 className="font-bold text-gray-900 dark:text-gray-100 text-base mb-3 pb-2 border-b-2 border-gray-300 dark:border-gray-700">
-            Transaction Details
-          </h3>
-          <div className="space-y-2.5">
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Payment For
-              </label>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                {payment.category.name}
-              </p>
+        <div className="mb-4 sm:mb-5">
+          <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm sm:text-base mb-3 pb-2 border-b-2 border-gray-300 dark:border-gray-700">Transaction Details</h3>
+          <div className="space-y-2 sm:space-y-2.5">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-0">
+              <label className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400">Payment For</label>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100">{payment.category.name}</p>
             </div>
             <div>
-              <label className="text-sm font-semibold text-gray-600 dark:text-gray-400 block mb-1">
-                Payment Reference
-              </label>
-              <p className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded border border-gray-300 dark:border-gray-700 break-all text-gray-900 dark:text-gray-100">
-                {payment.payment_reference}
-              </p>
+              <label className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 block mb-1">Payment Reference</label>
+              <p className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-2 sm:px-3 py-2 rounded border border-gray-300 dark:border-gray-700 break-all text-gray-900 dark:text-gray-100">{payment.payment_reference}</p>
             </div>
             {payment.transaction_reference && (
               <div>
-                <label className="text-sm font-semibold text-gray-600 dark:text-gray-400 block mb-1">
-                  Transaction Reference
-                </label>
-                <p className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded border border-gray-300 dark:border-gray-700 break-all text-gray-900 dark:text-gray-100">
-                  {payment.transaction_reference}
-                </p>
+                <label className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 block mb-1">Transaction Reference</label>
+                <p className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-2 sm:px-3 py-2 rounded border border-gray-300 dark:border-gray-700 break-all text-gray-900 dark:text-gray-100">{payment.transaction_reference}</p>
               </div>
             )}
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Payment Date
-              </label>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                {format(new Date(payment.created_at), "dd/MM/yyyy")}
-              </p>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-0">
+              <label className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400">Payment Date</label>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100">{format(new Date(payment.created_at), "dd/MM/yyyy")}</p>
             </div>
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Payment Time
-              </label>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                {format(new Date(payment.created_at), "HH:mm:ss")}
-              </p>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-0">
+              <label className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400">Payment Time</label>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100">{format(new Date(payment.created_at), "HH:mm:ss")}</p>
             </div>
           </div>
         </div>
 
-        {/* Payment Summary */}
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg border-2 border-gray-300 dark:border-gray-700 p-4">
+        {/* Summary */}
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg border-2 border-gray-300 dark:border-gray-700 p-3 sm:p-4">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Base Amount
-              </span>
-              <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                ₦{payment.original_amount.toLocaleString()}
-              </span>
+              <span className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400">Base Amount</span>
+              <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100">₦{payment.original_amount.toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                Gateway Fee
-              </span>
-              <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                ₦{payment.paystack_charge.toLocaleString()}
-              </span>
+              <span className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400">Gateway Fee</span>
+              <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100">₦{payment.paystack_charge.toLocaleString()}</span>
             </div>
             <div className="h-px bg-gray-300 dark:bg-gray-700"></div>
             <div className="flex justify-between items-center">
-              <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">
-                Total Amount Paid
-              </h3>
-              <span className="text-2xl font-bold text-green-600 dark:text-green-500">
-                ₦{payment.total_amount.toLocaleString()}
-              </span>
+              <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100">Total Paid</h3>
+              <span className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-500">₦{payment.total_amount.toLocaleString()}</span>
             </div>
           </div>
         </div>
 
-        {/* Footer Note */}
-        <div className="mt-5 text-center">
-          <p className="text-xs text-gray-600 dark:text-gray-400">
-            This is an official payment receipt. Keep for your records.
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-            Generated on {format(new Date(), "dd/MM/yyyy HH:mm:ss")}
-          </p>
+        {/* Footer */}
+        <div className="mt-4 sm:mt-5 text-center">
+          <p className="text-xs text-gray-600 dark:text-gray-400">This is an official payment receipt. Keep for your records.</p>
+          <p className="text-xs text-gray-500 mt-1">Generated on {format(new Date(), "dd/MM/yyyy HH:mm:ss")}</p>
         </div>
       </div>
 
-      {/* Bottom Border */}
       <div className="h-2 bg-green-600 dark:bg-green-500"></div>
     </div>
   );
 };
 
-// Main Receipt Component
+// Main Component
 const Receipt: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
@@ -565,22 +384,17 @@ const Receipt: React.FC = () => {
     try {
       setDownloading(true);
 
-      // Create hidden container
       const container = document.createElement("div");
       container.style.position = "absolute";
       container.style.left = "-9999px";
       container.style.top = "0";
-      container.style.width = "798px";
       document.body.appendChild(container);
 
-      // Render receipt (always white version for PDF)
       const root = createRoot(container);
       root.render(<ReceiptContent payment={payment} />);
 
-      // Wait for images to load
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Convert to PNG
       const dataUrl = await domToPng(container.firstChild as HTMLElement, {
         quality: 1.0,
         backgroundColor: "#ffffff",
@@ -590,37 +404,18 @@ const Receipt: React.FC = () => {
         },
       });
 
-      // Create PDF
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
-        compress: true,
       });
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pdfWidth - 20;
-      const receiptElement = container.firstChild as HTMLElement;
-      const imgHeight =
-        imgWidth * (receiptElement.offsetHeight / receiptElement.offsetWidth);
+      const imgWidth = 210;
+      const imgHeight = 297;
 
-      // Center vertically if receipt is smaller than page
-      const yPos = imgHeight < pdfHeight ? (pdfHeight - imgHeight) / 2 : 10;
-
-      pdf.addImage(
-        dataUrl,
-        "PNG",
-        10,
-        yPos,
-        imgWidth,
-        imgHeight,
-        undefined,
-        "FAST"
-      );
+      pdf.addImage(dataUrl, "PNG", 0, 0, imgWidth, imgHeight, undefined, "FAST");
       pdf.save(`NACOS_Receipt_${payment.payment_reference}.pdf`);
 
-      // Cleanup
       root.unmount();
       document.body.removeChild(container);
     } catch (err) {
@@ -638,17 +433,11 @@ const Receipt: React.FC = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-background">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center bg-card rounded-lg p-8 shadow-lg border border-border"
-          >
-            <Loader2 className="h-12 w-12 animate-spin text-green-600 mx-auto mb-3" />
-            <h3 className="text-lg font-bold text-foreground mb-1">
-              Loading Receipt
-            </h3>
-            <p className="text-sm text-muted-foreground">Please wait...</p>
+        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-background p-4">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center bg-card rounded-lg p-6 sm:p-8 shadow-lg border border-border">
+            <Loader2 className="h-10 w-10 sm:h-12 sm:w-12 animate-spin text-green-600 mx-auto mb-3" />
+            <h3 className="text-base sm:text-lg font-bold text-foreground mb-1">Loading Receipt</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">Please wait...</p>
           </motion.div>
         </div>
       </Layout>
@@ -658,26 +447,18 @@ const Receipt: React.FC = () => {
   if (error || !payment) {
     return (
       <Layout>
-        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-background">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center bg-card rounded-lg p-8 shadow-lg border border-border max-w-md"
-          >
-            <div className="w-16 h-16 bg-red-100 dark:bg-red-950/20 rounded-full flex items-center justify-center mx-auto mb-3">
-              <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-500" />
+        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-background p-4">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center bg-card rounded-lg p-6 sm:p-8 shadow-lg border border-border max-w-md w-full">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-red-100 dark:bg-red-950/20 rounded-full flex items-center justify-center mx-auto mb-3">
+              <AlertCircle className="h-7 w-7 sm:h-8 sm:w-8 text-red-600 dark:text-red-500" />
             </div>
-            <h2 className="text-xl font-bold text-foreground mb-2">
-              Receipt Not Found
-            </h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              {error || "Could not find payment details."}
-            </p>
-            <div className="flex gap-2">
+            <h2 className="text-lg sm:text-xl font-bold text-foreground mb-2">Receipt Not Found</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground mb-4">{error || "Could not find payment details."}</p>
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button asChild variant="outline" className="flex-1" size="sm">
                 <Link to="/history">
                   <FileText className="mr-2 h-4 w-4" />
-                  Payment History
+                  History
                 </Link>
               </Button>
               <Button asChild className="flex-1" size="sm">
@@ -696,166 +477,136 @@ const Receipt: React.FC = () => {
   return (
     <Layout>
       <style>{`
-    @media print {
-        .no-print {
-            display: none !important;
-        }
-        body {
-            margin: 0;
-            padding: 0;
-            background: white !important;
-        }
-        
-        /* Hide the display receipt and show print receipt */
-        #display-receipt {
-            display: none !important;
-        }
-        
-        #print-receipt {
-            display: block !important;
-            box-shadow: none !important;
-            page-break-after: avoid;
-            width: 100% !important;
-            max-width: 798px !important;
-            margin: 0 auto !important;
-            box-sizing: border-box !important;
-        }
-        
-        #print-receipt > div {
-            width: 100% !important;
-            max-width: 798px !important;
-            box-sizing: border-box !important;
-        }
-        
-        /* Force light colors when printing */
-        #print-receipt,
-        #print-receipt * {
+        @media print {
+          /* Hide non-printable elements */
+          .no-print { display: none !important; }
+          body { margin: 0; padding: 0; background: white !important; }
+          
+          /* Force light mode styles for printing */
+          * {
             background-color: white !important;
             color: black !important;
-        }
-        
-        /* Keep green elements */
-        #print-receipt .text-green-600 {
-            color: #16a34a !important;
-        }
-        
-        #print-receipt .bg-green-600 {
-            background-color: #16a34a !important;
-        }
-        
-        /* Keep gray backgrounds */
-        #print-receipt .bg-gray-100 {
+          }
+          
+          /* Override specific elements with their light mode colors */
+          .bg-white, .dark\\:bg-gray-900 {
+            background-color: white !important;
+          }
+          
+          .dark\\:bg-gray-800 {
+            background-color: white !important;
+          }
+          
+          .dark\\:bg-gray-800 {
             background-color: #f3f4f6 !important;
-        }
-        
-        /* Keep borders light and visible */
-        #print-receipt .border-gray-300 {
+          }
+          
+          .text-gray-900, .dark\\:text-gray-100 {
+            color: #111827 !important;
+          }
+          
+          .text-gray-600, .dark\\:text-gray-400 {
+            color: #6b7280 !important;
+          }
+          
+          .text-gray-500 {
+            color: #9ca3af !important;
+          }
+          
+          .text-green-600, .dark\\:text-green-500 {
+            color: #16a34a !important;
+          }
+          
+          .bg-gray-100, .dark\\:bg-gray-800 {
+            background-color: #f3f4f6 !important;
+          }
+          
+          /* Force light mode borders */
+          .border-gray-300, .dark\\:border-gray-700 {
             border-color: #d1d5db !important;
-        }
-        
-        #print-receipt .border {
+          }
+          
+          .border-gray-200, .dark\\:border-gray-700 {
+            border-color: #e5e7eb !important;
+          }
+          
+          /* Maintain border thickness */
+          .border-b-2 {
+            border-bottom-width: 2px !important;
+          }
+          
+          .border-t-2 {
+            border-top-width: 2px !important;
+          }
+          
+          .border-2 {
+            border-width: 2px !important;
+          }
+          
+          .border {
             border-width: 1px !important;
-            border-style: solid !important;
+          }
+          
+          /* Green bottom bar */
+          .bg-green-600, .dark\\:bg-green-500 {
+            background-color: #16a34a !important;
+          }
+          
+          @page { 
+            size: A4; 
+            margin: 0; 
+          }
         }
-        
-        @page {
-            size: A4;
-            margin: 10mm;
-        }
-    }
-    
-    /* Hide print receipt on screen */
-    #print-receipt {
-        display: none;
-    }
-`}</style>
-      <div className="min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-950 py-8 px-4">
+      `}</style>
+      <div className="min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-950 py-4 sm:py-6 md:py-8 px-4">
         <div className="container max-w-4xl mx-auto">
           <AnimatePresence>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="relative"
-            >
-              {/* Back Button */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                className="max-w-3xl mx-auto mb-4 no-print"
-              >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate("/dashboard")}
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dashboard
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+              {/* Actions */}
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="max-w-3xl mx-auto mb-3 sm:mb-4 no-print flex justify-between items-center">
+                <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")} className="text-xs sm:text-sm">
+                  <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Back to Dashboard</span>
+                  <span className="sm:hidden">Back</span>
                 </Button>
-              </motion.div>
-
-              {/* Download Button - Top Right */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                className="max-w-3xl mx-auto flex justify-end mb-4 no-print"
-              >
-                <Button
-                  onClick={handleDownloadPDF}
-                  disabled={downloading}
-                  className="h-11 text-sm font-semibold bg-green-600 hover:bg-green-700 text-white"
-                >
+                <Button onClick={handleDownloadPDF} disabled={downloading} size="sm" className="bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm">
                   {downloading ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating PDF...
+                      <Loader2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                      <span className="hidden sm:inline">Generating...</span>
+                      <span className="sm:hidden">Wait...</span>
                     </>
                   ) : (
                     <>
-                      <Download className="mr-2 h-4 w-4" />
-                      Download PDF
+                      <Download className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                      <span className="hidden sm:inline">Download PDF</span>
+                      <span className="sm:hidden">Download</span>
                     </>
                   )}
                 </Button>
               </motion.div>
 
-              {/* Display Receipt - Visible on screen with dark mode support */}
+              {/* Display Receipt */}
               <div className="overflow-x-auto">
                 <DisplayReceiptContent payment={payment} />
               </div>
 
-              {/* Print Receipt - Hidden on screen, visible when printing (always white with thin light borders) */}
-              <div id="print-receipt" style={{ display: "none" }}>
+              {/* Print Receipt - COMMENTED OUT TO PREVENT DOUBLE PRINTING */}
+              {/* <div id="print-receipt" style={{ display: "none" }}>
                 <ReceiptContent payment={payment} />
-              </div>
+              </div> */}
 
-              {/* Action Buttons - Bottom */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="mt-6 max-w-3xl mx-auto no-print"
-              >
-                <div className="grid sm:grid-cols-2 gap-3">
-                  <Button
-                    onClick={handlePrint}
-                    variant="outline"
-                    className="h-11 text-sm font-semibold border-2"
-                  >
-                    <Printer className="mr-2 h-4 w-4" />
+              {/* Bottom Actions */}
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-4 sm:mt-6 max-w-3xl mx-auto no-print">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  <Button onClick={handlePrint} variant="outline" className="h-10 sm:h-11 text-xs sm:text-sm font-semibold border-2">
+                    <Printer className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Print Receipt
                   </Button>
-
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="h-11 text-sm font-semibold border-2"
-                  >
+                  <Button asChild variant="outline" className="h-10 sm:h-11 text-xs sm:text-sm font-semibold border-2">
                     <Link to="/history">
-                      <FileText className="mr-2 h-4 w-4" />
-                      View All Receipts
+                      <FileText className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                      All Receipts
                     </Link>
                   </Button>
                 </div>
