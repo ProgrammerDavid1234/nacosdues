@@ -27,8 +27,7 @@ import {
 } from 'lucide-react';
 import { API_BASE_URL } from '@/components/api/api';
 
-// Enums matching your backend - FIXED TO MATCH BACKEND EXACTLY
-const levels = ['100', '200', '300', '400', '500'];
+const levels = ['100', '200', '300', '400'];
 const departments = [
   { value: 'computer science', label: 'Computer Science' },
   { value: 'information technology', label: 'Information Technology' },

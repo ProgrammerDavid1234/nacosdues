@@ -137,6 +137,7 @@ const AdminDashboard: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [studentsPagination, setStudentsPagination] = useState<PaginationMeta | null>(null);
   const [loading, setLoading] = useState(false);
+  const [togglingCategory, setTogglingCategory] = useState<string | null>(null);
   
   // Page states
   const [transactionsPage, setTransactionsPage] = useState(1);
@@ -155,6 +156,8 @@ const AdminDashboard: React.FC = () => {
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const autoRefreshInterval = 30000;
   
   // Pagination states for category detail (client-side)
   const [categoryDetailPage, setCategoryDetailPage] = useState(1);
@@ -182,32 +185,33 @@ useEffect(() => {
 
   // Fetch transactions with pagination
   const fetchTransactions = async (page: number = 1) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: '20'
-      });
+  setLoading(true);
+  try {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: '20',
+      sort: 'desc' // 'desc' = most recent first (newest to oldest)
+    });
 
-      if (searchQuery) params.append('search', searchQuery);
-      if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
+    if (searchQuery) params.append('search', searchQuery);
+    if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
 
-      const response = await fetch(`${API_BASE_URL}/transactions/?${params}`, {
-        headers: { 'Authorization': `Bearer ${getAuthToken()}` }
-      });
-      const data: TransactionsResponse = await response.json();
-      setTransactions(data.data);
-      setTransactionsPagination(data.pagination);
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch transactions',
-        variant: 'destructive'
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    const response = await fetch(`${API_BASE_URL}/transactions/?${params}`, {
+      headers: { 'Authorization': `Bearer ${getAuthToken()}` }
+    });
+    const data: TransactionsResponse = await response.json();
+    setTransactions(data.data);
+    setTransactionsPagination(data.pagination);
+  } catch (error) {
+    toast({
+      title: 'Error',
+      description: 'Failed to fetch transactions',
+      variant: 'destructive'
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Fetch categories with pagination and search
 const fetchCategories = async (page: number = 1) => {
@@ -374,30 +378,58 @@ const fetchCategories = async (page: number = 1) => {
     setShowEditDialog(true);
   };
 
-  // Toggle category status
-  const handleToggleCategoryStatus = async (categoryId: string) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/payment-categories/${categoryId}/toggle`, {
-        method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${getAuthToken()}` }
-      });
+  // // Toggle category status
+  // const handleToggleCategoryStatus = async (categoryId: string) => {
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/payment-categories/${categoryId}/toggle`, {
+  //       method: 'PATCH',
+  //       headers: { 'Authorization': `Bearer ${getAuthToken()}` }
+  //     });
       
-      if (response.ok) {
-        const result = await response.json();
-        toast({
-          title: 'Success',
-          description: result.message
-        });
-        fetchCategories(categoriesPage);
-      }
-    } catch (error) {
+  //     if (response.ok) {
+  //       const result = await response.json();
+  //       toast({
+  //         title: 'Success',
+  //         description: result.message
+  //       });
+  //       fetchCategories(categoriesPage);
+  //     }
+  //   } catch (error) {
+  //     toast({
+  //       title: 'Error',
+  //       description: 'Failed to update category',
+  //       variant: 'destructive'
+  //     });
+  //   }
+  // };
+
+
+  const handleToggleCategoryStatus = async (categoryId: string) => {
+  setTogglingCategory(categoryId);
+  try {
+    const response = await fetch(`${API_BASE_URL}/payment-categories/${categoryId}/toggle`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${getAuthToken()}` }
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
       toast({
-        title: 'Error',
-        description: 'Failed to update category',
-        variant: 'destructive'
+        title: 'Success',
+        description: result.message
       });
+      fetchCategories(categoriesPage);
     }
-  };
+  } catch (error) {
+    toast({
+      title: 'Error',
+      description: 'Failed to update category',
+      variant: 'destructive'
+    });
+  } finally {
+    setTogglingCategory(null);
+  }
+};
 
   // Delete category
   const handleDeleteCategory = async () => {
@@ -1060,18 +1092,26 @@ Add Category
                           </div>
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleToggleCategoryStatus(category.id);
-                              }}
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                category.is_active
-                                  ? 'bg-success/10 text-success'
-                                  : 'bg-muted text-muted-foreground'
-                              }`}
-                            >
-                              {category.is_active ? 'Active' : 'Inactive'}
-                            </button>
+  onClick={(e) => {
+    e.stopPropagation();
+    handleToggleCategoryStatus(category.id);
+  }}
+  disabled={togglingCategory === category.id}
+  className={`px-2 py-1 rounded-full text-xs font-medium min-w-[70px] ${
+    category.is_active
+      ? 'bg-success/10 text-success'
+      : 'bg-muted text-muted-foreground'
+  } ${togglingCategory === category.id ? 'opacity-50' : ''}`}
+>
+  {togglingCategory === category.id ? (
+    <span className="flex items-center gap-1">
+      <div className="animate-spin h-3 w-3 border-2 border-current border-t-transparent rounded-full"></div>
+      ...
+    </span>
+  ) : (
+    category.is_active ? 'Active' : 'Inactive'
+  )}
+</button>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -1316,24 +1356,26 @@ Add Category
           Are you sure you want to delete this category? This action cannot be undone.
         </DialogDescription>
       </DialogHeader>
-      <DialogFooter className="mt-4">
-        <Button 
-          variant="outline" 
-          onClick={() => {
-            setShowDeleteDialog(false);
-            setCategoryToDelete(null);
-          }}
-        >
-          Cancel
-        </Button>
-        <Button 
-          variant="destructive"
-          onClick={handleDeleteCategory}
-          disabled={loading}
-        >
-          {loading ? 'Deleting...' : 'Delete'}
-        </Button>
-      </DialogFooter>
+      <DialogFooter className="mt-4 flex-col sm:flex-row gap-2 sm:gap-0">
+  <Button 
+    variant="outline" 
+    onClick={() => {
+      setShowDeleteDialog(false);
+      setCategoryToDelete(null);
+    }}
+    className="w-full sm:w-auto"
+  >
+    Cancel
+  </Button>
+  <Button 
+    variant="destructive"
+    onClick={handleDeleteCategory}
+    disabled={loading}
+    className="w-full sm:w-auto"
+  >
+    {loading ? 'Deleting...' : 'Delete'}
+  </Button>
+</DialogFooter>
     </DialogContent>
   </Dialog>
 
