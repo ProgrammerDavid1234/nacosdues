@@ -127,7 +127,7 @@ const AdminDashboard: React.FC = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'transactions' | 'categories' | 'students'>('transactions');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('completed');
   
   // Data states
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -183,18 +183,19 @@ useEffect(() => {
   };
 }, [searchQuery]);
 
-  // Fetch transactions with pagination
-  const fetchTransactions = async (page: number = 1) => {
+
+// Fetch transactions with pagination
+const fetchTransactions = async (page: number = 1) => {
   setLoading(true);
   try {
     const params = new URLSearchParams({
       page: page.toString(),
       limit: '20',
-      sort: 'desc' // 'desc' = most recent first (newest to oldest)
+      sort: 'desc',
+      status: statusFilter // Use the filter but default is 'completed'
     });
 
     if (searchQuery) params.append('search', searchQuery);
-    if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
 
     const response = await fetch(`${API_BASE_URL}/transactions/?${params}`, {
       headers: { 'Authorization': `Bearer ${getAuthToken()}` }
@@ -655,11 +656,16 @@ const fetchCategories = async (page: number = 1) => {
   }, []);
 
   // Effect for transactions page change
-  useEffect(() => {
-    if (activeTab === 'transactions') {
-      fetchTransactions(transactionsPage);
-    }
-  }, [transactionsPage, debouncedSearchQuery, statusFilter]);
+useEffect(() => {
+  if (activeTab === 'transactions') {
+    fetchTransactions(transactionsPage);
+  }
+}, [transactionsPage, debouncedSearchQuery, statusFilter]);
+
+// Reset pagination when status filter changes
+useEffect(() => {
+  setTransactionsPage(1);
+}, [statusFilter]);
 
   // Effect for categories page change
 useEffect(() => {
@@ -936,37 +942,23 @@ Add Category
               />
             </div>
             {activeTab === 'transactions' && (
-              <div className="flex gap-2">
-                <Button 
-                  variant={statusFilter === 'all' ? 'default' : 'outline'} 
-                  size="sm"
-                  onClick={() => setStatusFilter('all')}
-                >
-                  All
-                </Button>
-                <Button 
-                  variant={statusFilter === 'completed' ? 'default' : 'ghost'} 
-                  size="sm"
-                  onClick={() => setStatusFilter('completed')}
-                >
-                  Success
-                </Button>
-                <Button 
-                  variant={statusFilter === 'pending' ? 'default' : 'ghost'} 
-                  size="sm"
-                  onClick={() => setStatusFilter('pending')}
-                >
-                  Pending
-                </Button>
-                <Button 
-                  variant={statusFilter === 'failed' ? 'default' : 'ghost'} 
-                  size="sm"
-                  onClick={() => setStatusFilter('failed')}
-                >
-                  Failed
-                </Button>
-              </div>
-            )}
+  <div className="flex gap-2">
+    <Button 
+      variant={statusFilter === 'completed' ? 'default' : 'outline'} 
+      size="sm"
+      onClick={() => setStatusFilter('completed')}
+    >
+      Completed
+    </Button>
+    <Button 
+      variant={statusFilter === 'failed' ? 'default' : 'outline'} 
+      size="sm"
+      onClick={() => setStatusFilter('failed')}
+    >
+      Failed
+    </Button>
+  </div>
+)}
           </div>
         </div>
 
@@ -979,17 +971,13 @@ Add Category
               </div>
             ) : transactions.length === 0 ? (
               <EmptyState 
-                message={
-                  statusFilter === 'all' 
-                    ? "No transactions found" 
-                    : statusFilter === 'pending'
-                    ? "No pending transactions"
-                    : statusFilter === 'failed'
-                    ? "No failed transactions"
-                    : "No completed transactions"
-                }
-                icon={FileText}
-              />
+    message={
+      statusFilter === 'completed' 
+        ? "No completed transactions" 
+        : "No failed transactions"
+    }
+    icon={FileText}
+  />
             ) : (
               <>
                 <div className="overflow-x-auto">

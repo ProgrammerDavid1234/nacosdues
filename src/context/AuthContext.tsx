@@ -4,8 +4,9 @@ import { User } from '@/types';
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean; // Add this
+  isLoading: boolean;
   setUser: (user: User | null) => void;
+  updateUser: (userData: any) => void;
   logout: () => void;
 }
 
@@ -13,7 +14,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Start with loading
+  const [isLoading, setIsLoading] = useState(true);
 
   // Check for existing session on mount
   useEffect(() => {
@@ -35,6 +36,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   }, []);
 
+  // Update user function - handles both camelCase and snake_case
+  const updateUser = useCallback((userData: any) => {
+    console.log('AuthContext: Updating user with:', userData);
+    
+    const updatedUser: User = {
+      id: userData.id,
+      email: userData.email,
+      // Handle both camelCase (new backend response) and snake_case (legacy)
+      fullName: userData.fullName || userData.full_name || '',
+      matricNumber: userData.matricNumber || userData.matric_number || '',
+      level: userData.level || '',
+      role: userData.role,
+      // Optional fields
+      department: userData.department,
+      phone: userData.phone,
+      createdAt: userData.createdAt || userData.created_at,
+    };
+    
+    console.log('AuthContext: Setting user to:', updatedUser);
+    
+    setUser(updatedUser);
+    
+    // Update localStorage with new user data
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  }, []);
+
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('token');
@@ -46,8 +73,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user,
         isAuthenticated: !!user,
-        isLoading, // Add this
+        isLoading,
         setUser,
+        updateUser,
         logout,
       }}
     >

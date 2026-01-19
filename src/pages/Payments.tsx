@@ -84,6 +84,17 @@ const Payments: React.FC = () => {
 
   const getAuthToken = () => localStorage.getItem('token');
 
+
+useEffect(() => {
+  setIsProcessing(false);
+}, [step]);
+
+useEffect(() => {
+  return () => {
+    setIsProcessing(false);
+  };
+}, []);
+
   // Fetch user data and categories on mount
   useEffect(() => {
     fetchInitialData();
@@ -96,6 +107,8 @@ const Payments: React.FC = () => {
       handlePaymentCallback(reference);
     }
   }, [searchParams]);
+
+  
 
   const fetchInitialData = async () => {
   try {

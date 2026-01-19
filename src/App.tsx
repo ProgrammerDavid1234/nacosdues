@@ -18,6 +18,7 @@ import Receipt from "./pages/Receipt";
 import VerifyPayment from "./pages/VerifyPayment";
 import StudentSignup from "./pages/StudentSignup";
 import ScrollToTop from "./components/ScrollToTop"
+import EditProfile from '@/pages/EditProfile';
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,7 @@ const AppRoutes = () => {
       <Route path="/receipt/:id" element={<Receipt />} />
       <Route path="/verify-payment" element={<VerifyPayment />} />
       <Route path="/signup" element={<StudentSignup />} />
+      <Route path="/profile/edit" element={<EditProfile />} />
 
       <Route path="/login" element={
         <PublicRoute>

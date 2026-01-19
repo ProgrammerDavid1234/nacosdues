@@ -86,8 +86,8 @@
     --accent: 265 15% 18%;
     --accent-foreground: 265 85% 75%;
 
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 62% 30%; /* Wait, this looks wrong in original too maybe? Fixing typical dark mode destructive */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
     
     --border: 240 15% 20%;
     --input: 240 15% 20%;

@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
+import { LogOut, LayoutDashboard, Menu, X, Settings } from 'lucide-react';
 
 const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -23,14 +23,23 @@ const Header: React.FC = () => {
     navigate('/');
   };
 
-  // Get user initials
-  const getInitials = (name: string) => {
+  // Get user initials - NOW WITH SAFETY CHECKS
+  const getInitials = (name?: string) => {
+    if (!name || typeof name !== 'string') return 'U';
+    
     return name
       .split(' ')
+      .filter(n => n.length > 0)
       .map(n => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  };
+
+  // Get first name - NEW HELPER FUNCTION
+  const getFirstName = (name?: string) => {
+    if (!name || typeof name !== 'string') return 'User';
+    return name.split(' ')[0] || 'User';
   };
 
   return (
@@ -73,21 +82,28 @@ const Header: React.FC = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="gap-2">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
-                      {user?.fullName && getInitials(user.fullName)}
+                      {getInitials(user?.fullName)}
                     </div>
-                    <span className="hidden lg:inline">{user?.fullName.split(' ')[0]}</span>
+                    <span className="hidden lg:inline">{getFirstName(user?.fullName)}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 bg-card">
                   <div className="px-3 py-2">
-                    <p className="text-sm font-medium">{user?.fullName}</p>
-                    <p className="text-xs text-muted-foreground">{user?.email}</p>
+                    <p className="text-sm font-medium">{user?.fullName || 'User'}</p>
+                    <p className="text-xs text-muted-foreground">{user?.email || ''}</p>
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to={user?.role === 'admin' ? '/admin' : '/dashboard'} className="cursor-pointer">
                       <LayoutDashboard className="mr-2 h-4 w-4" />
                       Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile/edit" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Edit Profile
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -120,11 +136,11 @@ const Header: React.FC = () => {
             <>
               {/* User Initials Avatar */}
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-xs">
-                {getInitials(user.fullName)}
+                {getInitials(user?.fullName)}
               </div>
               {/* User First Name */}
               <span className="text-sm font-medium text-foreground max-w-[80px] truncate">
-                {user.fullName.split(' ')[0]}
+                {getFirstName(user?.fullName)}
               </span>
             </>
           )}
@@ -151,8 +167,8 @@ const Header: React.FC = () => {
             {isAuthenticated ? (
               <>
                 <div className="px-3 py-2 rounded-lg bg-muted">
-                  <p className="text-sm font-medium">{user?.fullName}</p>
-                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  <p className="text-sm font-medium">{user?.fullName || 'User'}</p>
+                  <p className="text-xs text-muted-foreground">{user?.email || ''}</p>
                 </div>
                 <Link
                   to={user?.role === 'admin' ? '/admin' : '/dashboard'}
@@ -170,6 +186,13 @@ const Header: React.FC = () => {
                     Make Payment
                   </Link>
                 )}
+                <Link
+                  to="/profile/edit"
+                  className="px-3 py-2 text-sm font-medium hover:bg-accent rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Edit Profile
+                </Link>
                 <button
                   onClick={() => {
                     handleLogout();

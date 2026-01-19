@@ -166,11 +166,7 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" className="rounded border-border" />
-                Remember me
-              </label>
+            <div className="flex justify-end">
               <a href="#" className="text-sm text-primary hover:underline">
                 Forgot password?
               </a>
