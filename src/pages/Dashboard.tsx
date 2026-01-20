@@ -54,6 +54,19 @@ const Dashboard: React.FC = () => {
   // Fix double loading issue
   const hasFetchedRef = React.useRef(false);
 
+  // Helper function to safely get first name
+  const getFirstName = (name?: string) => {
+    if (!name || typeof name !== 'string') return 'User';
+    const firstName = name.split(' ')[0];
+    return firstName || 'User';
+  };
+
+  // Debug: Log user data
+  useEffect(() => {
+    console.log('Dashboard - Current user:', user);
+    console.log('Dashboard - User fullName:', user?.fullName);
+  }, [user]);
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -74,7 +87,6 @@ const Dashboard: React.FC = () => {
         ]);
 
         setStats(statsRes.data);
-        // Ensure only 5 transactions are shown
         setRecentTransactions(transactionsRes.data.slice(0, 5));
         setOutstandingPayments(outstandingRes.data);
       } catch (err: any) {
@@ -99,7 +111,7 @@ const Dashboard: React.FC = () => {
     if (upperStatus === 'PENDING') {
       return 'bg-yellow-500 text-white';
     }
-    return 'bg-red-500 text-white'; // FAILED or any other status
+    return 'bg-red-500 text-white';
   };
 
   const statsCards = stats ? [
@@ -167,14 +179,14 @@ const Dashboard: React.FC = () => {
     <Layout showFooter={false}>
       <div className="min-h-[calc(100vh-4rem)] bg-muted/30">
         <div className="container py-8">
-          {/* Welcome Section */}
+          {/* Welcome Section - FIXED */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
             <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-              Welcome back, {user?.fullName?.split(' ')[0]}! 
+              Welcome back, {getFirstName(user?.fullName)}! 
             </h1>
             <p className="text-muted-foreground">
               Here's an overview of your payment activities
@@ -202,7 +214,7 @@ const Dashboard: React.FC = () => {
             ))}
           </div>
 
-          {/* Main Content Grid - Restructured */}
+          {/* Main Content Grid */}
           <div className="grid gap-8 lg:grid-cols-3">
             {/* Left Column - Outstanding Payments + Quick Actions */}
             <div className="lg:col-span-2 flex flex-col gap-8">
@@ -262,7 +274,7 @@ const Dashboard: React.FC = () => {
                 </div>
               </motion.div>
 
-              {/* Quick Actions - Now inside left column */}
+              {/* Quick Actions */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -293,7 +305,7 @@ const Dashboard: React.FC = () => {
               </motion.div>
             </div>
 
-            {/* Right Column - Recent Transactions (Full Height) */}
+            {/* Right Column - Recent Transactions */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

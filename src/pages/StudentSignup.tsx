@@ -47,7 +47,6 @@ const Signup: React.FC = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
   const { setUser } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -134,49 +133,52 @@ const Signup: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
-    setIsLoading(true);
+  setIsLoading(true);
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/users/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          full_name: formData.fullName,
-          email: formData.email,
-          matric_number: formData.matricNumber,
-          phone_number: formData.phoneNumber,
-          level: formData.level,
-          department: formData.department,
-          password: formData.password,
-          role: 'student', // Always send role as student
-        }),
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        full_name: formData.fullName,
+        email: formData.email,
+        matric_number: formData.matricNumber,
+        phone_number: formData.phoneNumber,
+        level: formData.level,
+        department: formData.department,
+        password: formData.password,
+        role: 'student',
+      }),
+    });
+
+    const data = await response.json();
+    
+    if (response.ok) {
+
+      // Store token and user data (auto-login)
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setUser(data.user);
+
+      toast({
+        title: 'Registration Successful!',
+        description: `Welcome, ${data.user.fullName}! Your account has been created.`,
       });
-        const data = await response.json();
-      if (response.ok) {
-        toast({
-          title: 'Registration Successful!',
-          description: 'Your account has been created. Please login to continue.',
-        });
 
-        // Redirect to login page
-        navigate('/login');
-      } else {
-
-        let errorMessage = 'Unable to create account. Please try again later.';
-      
+      navigate('/dashboard');
+    } else {
+      let errorMessage = 'Unable to create account. Please try again later.';
+    
       if (data.detail) {
-        // Handle string detail
         if (typeof data.detail === 'string') {
           errorMessage = data.detail;
-        } 
-        // Handle array of error objects (FastAPI validation errors)
-        else if (Array.isArray(data.detail)) {
+        } else if (Array.isArray(data.detail)) {
           errorMessage = data.detail.map((err: any) => err.msg).join(', ');
         }
       } else if (data.message) {
@@ -185,23 +187,23 @@ const Signup: React.FC = () => {
         errorMessage = data.error;
       }
 
-        toast({
-          title: 'Registration Failed',
-          description: errorMessage,
-          variant: 'destructive',
-        });
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
       toast({
-        title: 'Error',
-        description: 'An error occurred. Please try again later.',
+        title: 'Registration Failed',
+        description: errorMessage,
         variant: 'destructive',
       });
-    } finally {
-      setIsLoading(false);
     }
-  };
+  } catch (error) {
+    console.error('Registration error:', error);
+    toast({
+      title: 'Error',
+      description: 'An error occurred. Please try again later.',
+      variant: 'destructive',
+      });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex bg-background">
@@ -241,6 +243,7 @@ const Signup: React.FC = () => {
                   value={formData.fullName}
                   onChange={handleChange}
                   className="pl-10 h-11"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -258,6 +261,7 @@ const Signup: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className="pl-10 h-11"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -276,6 +280,7 @@ const Signup: React.FC = () => {
                     value={formData.matricNumber}
                     onChange={handleChange}
                     className="pl-10 h-11"
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -292,6 +297,7 @@ const Signup: React.FC = () => {
                     value={formData.phoneNumber}
                     onChange={handleChange}
                     className="pl-10 h-11"
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -304,6 +310,7 @@ const Signup: React.FC = () => {
                 <Select
                   value={formData.level}
                   onValueChange={(value) => handleSelectChange('level', value)}
+                  disabled={isLoading}
                 >
                   <SelectTrigger className="h-11">
                     <div className="flex items-center gap-2">
@@ -326,6 +333,7 @@ const Signup: React.FC = () => {
                 <Select
                   value={formData.department}
                   onValueChange={(value) => handleSelectChange('department', value)}
+                  disabled={isLoading}
                 >
                   <SelectTrigger className="h-11">
                     <div className="flex items-center gap-2">
@@ -357,11 +365,13 @@ const Signup: React.FC = () => {
                   value={formData.password}
                   onChange={handleChange}
                   className="pl-10 pr-10 h-11"
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
